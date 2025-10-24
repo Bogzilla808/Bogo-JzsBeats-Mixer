@@ -1,0 +1,148 @@
+/* :root is a CSS pseudo-class that represents the highest-level element in the document */
+/* here we define some css variables for colors mostly */
+:root{
+--bg:#0f1724;
+--card:#0b1220;
+--accent:#00d4ff;
+--accent-2:#7b61ff;
+--glass: rgba(255,255,255,0.04);
+--muted: #94a3b8;
+--radius:14px;
+font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+html,body{ height:100%; }
+body{
+margin:0; padding:32px; background: radial-gradient(1200px 600px at 10% 10%, rgba(123,97,255,0.12), transparent), radial-gradient(900px 450px at 90% 90%, rgba(0,212,255,0.06), transparent), var(--bg); color:#e6eef6; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+}
+
+.container{
+max-width:1200px; margin:0 auto;
+display:grid; grid-template-columns: 1fr 420px; gap:24px; align-items:start;
+}
+
+header{display:flex; align-items:center; gap:16px; margin-bottom:12px}
+h1{font-size:20px; margin:0}
+.subtitle{color:var(--muted);font-size:13px}
+
+.mixer{
+background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+border-radius:var(--radius);
+padding:18px; box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+border:1px solid rgba(255,255,255,0.03);
+}
+
+.decks{display:grid; grid-template-columns: 1fr 1fr; gap:14px}
+.deck{
+background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+border-radius:12px; padding:12px; min-height:220px; border:1px solid rgba(255,255,255,0.03);
+display:flex; flex-direction:column; gap:10px;
+}
+
+ /* Select any element with the class ".title" that is inside an element with the class ".deck". */
+.deck .title{display:flex; justify-content:space-between; align-items:center}
+.deck .title h3{margin:0;font-size:14px}
+.deck .file{display:flex; gap:8px; align-items:center}
+
+.file input[type=file]{display:none}
+
+.btn{background:linear-gradient(90deg,var(--accent),var(--accent-2)); padding:8px 12px; border-radius:10px; color:#051024; font-weight:600; border:none; cursor:pointer}
+/* NO SPACE - Select elements that have both the class btn and the class ghost */
+.btn.ghost{background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.03)}
+
+.waveform{height:86px; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02)); border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:13px}
+
+.controls{display:flex; gap:10px; align-items:center}
+.big-knob{display:flex; flex-direction:column; align-items:center; gap:6px}
+.knob{width:70px; height:70px; border-radius:50%; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.03)}
+.knob span{font-size:12px;color:var(--muted)}
+
+/* -webkit-appearance:none --> remove the browser’s default styling for elements */
+.range{width:100%; display:flex; gap:8px; align-items:center}
+
+input[type=range]{
+    -webkit-appearance:none; 
+    height:6px; border-radius:6px; 
+    background:linear-gradient(90deg,var(--accent),var(--accent-2)); 
+    outline:none; 
+    width: 100%; max-width: 100%;
+}
+
+/* Targets track that handle runs on (for Chrome/Edge/...) */
+input[type="range"]::-webkit-slider-runnable-track {
+    height: 6px;
+    background: #333;
+    border-radius: 3px;
+}
+
+/* Targets track (same thing - for Firefox) */
+input[type="range"]::-moz-range-track {
+    height: 6px;
+    background: #333;
+    border-radius: 3px;
+}
+
+/* Thumb / knob */
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #6a0dad; /* dark purple */
+    box-shadow: 0 0 8px rgba(106, 13, 173, 0.6); /* glowing effect */
+    cursor: pointer;
+    margin-top: -7px; /* center vertically on track */
+    transition: transform 0.1s ease;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #6a0dad;
+    box-shadow: 0 0 8px rgba(106, 13, 173, 0.6);
+    cursor: pointer;
+}
+
+/* Optional hover effect for extra glow */
+input[type="range"]:hover::-webkit-slider-thumb {
+    transform: scale(1.1);
+    box-shadow: 0 0 12px rgba(106, 13, 173, 0.8);
+}
+
+/* Agin, same thing for Mozilla */
+input[type="range"]:hover::-moz-range-thumb {
+    transform: scale(1.1);
+    box-shadow: 0 0 12px rgba(106, 13, 173, 0.8);
+}
+
+/* ::-webkit-slider-thumb Targets the draggable handle of sliders */
+input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; 
+    width:18px; height:18px; 
+    border-radius:50%; 
+    background:white; 
+    box-shadow:0 3px 8px 
+    rgba(2,6,23,0.6)
+}
+
+.mixer-right{background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent); border-radius:var(--radius); padding:18px; border:1px solid rgba(255,255,255,0.03); height:100%}
+.crossfader{margin-top:20px}
+
+/*  Again, select elements with class ".label" inside elements with class  ".crossfader"  */
+.crossfader .label{display:flex; justify-content:space-between; margin-bottom:8px}
+
+/*  flex-direction:column; sorts items top → bottom  */
+.effects{display:flex; flex-direction:column; gap:12px}
+.effect{background:var(--glass); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.02)}
+.toggle{display:inline-flex; align-items:center; gap:8px}
+.small{font-size:13px;color:var(--muted)}
+
+footer{margin-top:16px; color:var(--muted); font-size:13px}
+
+/* Responsive - Apply this CSS only if the viewport width is <= 1000px (tablets/phones).*/
+@media (max-width:1000px){
+.container{grid-template-columns: 1fr;} /* single-column layout */
+.mixer-right{order:2}  /* makes it appear after other elements */
+}

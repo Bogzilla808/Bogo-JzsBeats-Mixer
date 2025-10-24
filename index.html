@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bogo JzsBeats Mixer — Multimedia Project (HTML & CSS)</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <div>
+      <header>
+        <div>
+          <h1>Bogo JzsBeats Mixer</h1>
+          <div class="subtitle">Multimedia project — HTML &amp; CSS prototype</div>
+        </div>
+      </header>
+
+      <main class="mixer" role="application" aria-label="DJ mixer">
+        <div class="decks">
+          <!-- DECK A -->
+          <div class="deck" id="deckA">
+            <div class="title">
+              <h3>Deck A</h3>
+              <div class="small">00:00</div>
+            </div>
+            <div class="file">
+              <label class="btn" for="fileA">Load Track</label>
+              <input id="fileA" type="file" accept="audio/*">
+              <button class="btn ghost" id="playA">Play</button>
+              <button class="btn ghost" id="pauseA">Pause</button>
+            </div>
+
+            <div class="waveform" id="waveA">Waveform (placeholder)</div>
+
+            <div class="controls">
+              <div class="big-knob">
+                <div class="knob"><span>VOL</span></div>
+                <div class="small">Volume</div>
+              </div>
+
+              <div style="flex:1">
+                <label class="small">Pitch</label>
+                <div class="range"><input type="range" min="-12" max="12" value="0" id="pitchA"></div>
+              </div>
+
+              <div style="width:110px">
+                <label class="small">EQ High</label>
+                <input type="range" min="-12" max="12" value="0">
+                <label class="small">EQ Mid</label>
+                <input type="range" min="-12" max="12" value="0">
+                <label class="small">EQ Low</label>
+                <input type="range" min="-12" max="12" value="0">
+              </div>
+            </div>
+          </div>
+
+          <!-- DECK B -->
+          <div class="deck" id="deckB">
+            <div class="title">
+              <h3>Deck B</h3>
+              <div class="small">00:00</div>
+            </div>
+            <div class="file">
+              <label class="btn" for="fileB">Load Track</label>
+              <input id="fileB" type="file" accept="audio/*">
+              <button class="btn ghost" id="playB">Play</button>
+              <button class="btn ghost" id="pauseB">Pause</button>
+            </div>
+
+            <div class="waveform" id="waveB">Waveform (placeholder)</div>
+
+            <div class="controls">
+              <div class="big-knob">
+                <div class="knob"><span>VOL</span></div>
+                <div class="small">Volume</div>
+              </div>
+
+              <div style="flex:1">
+                <label class="small">Pitch</label>
+                <div class="range"><input type="range" min="-12" max="12" value="0" id="pitchB"></div>
+              </div>
+
+              <div style="width:110px">
+                <label class="small">EQ High</label>
+                <input type="range" min="-12" max="12" value="0">
+                <label class="small">EQ Mid</label>
+                <input type="range" min="-12" max="12" value="0">
+                <label class="small">EQ Low</label>
+                <input type="range" min="-12" max="12" value="0">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Crossfader and Master -->
+        <div class="crossfader">
+          <div class="label"><div class="small">Deck A</div><div class="small">Crossfader</div><div class="small">Deck B</div></div>
+          <input type="range" min="0" max="100" value="50" id="crossfader">
+        </div>
+
+      </main>
+    </div>
+
+    <aside class="mixer-right">
+      <h3 style="margin-top:0">Master & Effects</h3>
+
+      <div style="display:flex; gap:10px; align-items:center; margin-bottom:12px">
+        <div style="flex:1">
+          <label class="small">Master Volume</label>
+          <input type="range" min="0" max="100" value="80" id="masterVol">
+        </div>
+        <div style="width:70px; text-align:center">
+          <div style="font-weight:700">-6 dB</div>
+          <div class="small">Peak</div>
+        </div>
+      </div>
+
+      <div class="effects">
+        <div class="effect">
+          <div style="display:flex; justify-content:space-between; align-items:center">
+            <div>
+              <strong>Reverb</strong>
+              <div class="small">Room reverb</div>
+            </div>
+            <div class="toggle">
+              <label class="small">On</label>
+              <input type="checkbox" id="revToggle">
+            </div>
+          </div>
+          <div style="margin-top:8px">
+            <label class="small">Mix</label>
+            <input type="range" min="0" max="100" value="20" id="revMix">
+          </div>
+        </div>
+
+        <div class="effect">
+          <div style="display:flex; justify-content:space-between; align-items:center">
+            <div>
+              <strong>Delay</strong>
+              <div class="small">Slapback / echo</div>
+            </div>
+            <div class="toggle">
+              <label class="small">On</label>
+              <input type="checkbox" id="delayToggle">
+            </div>
+          </div>
+          <div style="margin-top:8px">
+            <label class="small">Time</label>
+            <input type="range" min="0" max="1000" value="250" id="delayTime">
+          </div>
+        </div>
+
+        <div class="effect">
+          <div style="display:flex; justify-content:space-between; align-items:center">
+            <div>
+              <strong>Filter</strong>
+              <div class="small">Low-pass / High-pass</div>
+            </div>
+            <div class="toggle">
+              <label class="small">On</label>
+              <input type="checkbox" id="filterToggle">
+            </div>
+          </div>
+          <div style="margin-top:8px">
+            <label class="small">Cutoff</label>
+            <input type="range" min="20" max="20000" value="12000" id="filterCutoff">
+          </div>
+        </div>
+
+      </div>
+
+      <footer>
+        This is an HTML/CSS prototype. Next: wire audio with Web Audio API, implement waveform view, sync BPM, and beatmatching.
+      </footer>
+    </aside>
+  </div>
+
+  <!-- Minimal JS skeleton. The full audio implementation will use Web Audio API. -->
+  <script>
+    document.getElementById('fileA').addEventListener('change', (e)=>{
+      const f = e.target.files[0];
+      const el = document.querySelector('#deckA .file');
+      if(f) el.querySelector('.btn').textContent = f.name;
+    });
+    document.getElementById('fileB').addEventListener('change', (e)=>{
+      const f = e.target.files[0];
+      const el = document.querySelector('#deckB .file');
+      if(f) el.querySelector('.btn').textContent = f.name;
+    });
+  </script>
+</body>
+</html>
