@@ -177,17 +177,6 @@
   </div>
 
   <!-- Minimal JS skeleton. The full audio implementation will use Web Audio API. -->
-  <script>
-    document.getElementById('fileA').addEventListener('change', (e)=>{
-      const f = e.target.files[0];
-      const el = document.querySelector('#deckA .file');
-      if(f) el.querySelector('.btn').textContent = f.name;
-    });
-    document.getElementById('fileB').addEventListener('change', (e)=>{
-      const f = e.target.files[0];
-      const el = document.querySelector('#deckB .file');
-      if(f) el.querySelector('.btn').textContent = f.name;
-    });
-  </script>
+  <script src="./script.js"></script>
 </body>
 </html>
