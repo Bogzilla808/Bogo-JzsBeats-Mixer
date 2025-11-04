@@ -7,137 +7,143 @@ const btnPlayB = document.getElementById('playB');
 const btnPauseB = document.getElementById('pauseB');
 
 const mstVolSlider = document.getElementById('masterVol');
-
 const pitchSliderA = document.getElementById('pitchA');
 const pitchSliderB = document.getElementById('pitchB');
-
 const fadeSlider = document.getElementById('crossfader');
 
 // Create main audio context
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-// Store decks in memory
+// Master gain node (final stage)
+const masterGain = audioCtx.createGain();
+masterGain.connect(audioCtx.destination);
+
+// Deck structures
 let deckA = {
     buffer: null,
     source: null,
     gainNode: audioCtx.createGain(),
-    pitch: 1.0
+    pitch: 1.0,
+    canvas: document.getElementById('waveA')
 };
 
 let deckB = {
     buffer: null,
     source: null,
     gainNode: audioCtx.createGain(),
-    pitch: 1.0
+    pitch: 1.0,
+    canvas: document.getElementById('waveB')
 };
 
-// Connect gains to destination
-deckA.gainNode.connect(audioCtx.destination);
-deckB.gainNode.connect(audioCtx.destination);
+// Connect to master
+deckA.gainNode.connect(masterGain);
+deckB.gainNode.connect(masterGain);
 
-// Load audio from file inputs
+// Load and draw waveform once
 function loadTrack(file, deck) {
     const reader = new FileReader();
     reader.onload = function(e) {
         const arrayBuffer = e.target.result;
         audioCtx.decodeAudioData(arrayBuffer, (audioBuffer) => {
-            deck.buffer = audioBuffer; // save decoded audio
+            deck.buffer = audioBuffer;
+            drawWaveform(audioBuffer, deck.canvas);
         });
-    }
+    };
     reader.readAsArrayBuffer(file);
 }
 
-// Deck A file input
+function drawWaveform(audioBuffer, canvas) {
+    const ctx = canvas.getContext('2d');
+    const { width, height } = canvas;
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = '#12001c';
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = "#00b7ff";
+    ctx.shadowBlur = 0;
+    ctx.beginPath();
+
+    const data = audioBuffer.getChannelData(0);
+    const step = Math.ceil(data.length / width);
+    const amp = height / 2;
+
+    for (let i = 0; i < width; i++) {
+        const slice = data.slice(i * step, (i + 1) * step);
+        const min = Math.min(...slice);
+        const max = Math.max(...slice);
+        ctx.moveTo(i, (1 + min) * amp);
+        ctx.lineTo(i, (1 + max) * amp);
+    }
+
+    ctx.stroke();
+}
+
+// File input listeners
 labelA.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
-        const el = document.querySelector('#deckA .file');
-        el.querySelector('.btn').textContent = file.name;
+        document.querySelector('#deckA .file .btn').textContent = file.name;
         loadTrack(file, deckA);
     }
 });
 
-// Deck B file input
 labelB.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
-        const el = document.querySelector('#deckB .file');
-        el.querySelector('.btn').textContent = file.name;
+        document.querySelector('#deckB .file .btn').textContent = file.name;
         loadTrack(file, deckB);
     }
 });
 
-// Play functionality
+// Playback
 function playDeck(deck) {
-    if(!deck.buffer) return; // No track loaded
+    if (!deck.buffer) return;
+    if (deck.source) deck.source.stop();
 
-    // Stop previous source if playing
-    if(deck.source) deck.source.stop();
-
-    // Create a new buffer source
     const source = audioCtx.createBufferSource();
     source.buffer = deck.buffer;
-
-    // Apply pitch
     source.playbackRate.value = deck.pitch;
-
-    // Connect source -> gain --> destination
     source.connect(deck.gainNode);
-
     source.start();
+
     deck.source = source;
 }
 
 function stopDeck(deck) {
-    if(deck.source) {
+    if (deck.source) {
         deck.source.stop();
         deck.source = null;
     }
 }
 
-// Add event listeners for play/pause buttons
+// Buttons
 btnPlayA.addEventListener('click', () => playDeck(deckA));
-btnPauseA.addEventListener('click', () => stopDeck(deckA)); // placeholder
-
+btnPauseA.addEventListener('click', () => stopDeck(deckA));
 btnPlayB.addEventListener('click', () => playDeck(deckB));
-btnPauseB.addEventListener('click', () => stopDeck(deckB)); // placeholder
+btnPauseB.addEventListener('click', () => stopDeck(deckB));
 
-// Master Volume control (GainNodes)
+// Master volume
 mstVolSlider.addEventListener('input', (e) => {
-    const vol = e.target.value / 100; // convert 0-100 to 0-1
-    deckA.gainNode.gain.value = vol;
-    deckB.gainNode.gain.value = vol;
+    masterGain.gain.value = e.target.value / 100;
 });
 
-// TODO: individual deck volume can be added similarly
-// deckA.gainNode.gain.value = valueFromKnob;
-// deckB.gainNode.gain.value = valueFromKnob;
+// Pitch handling (simple version)
+function setPitch(deck, semitones) {
+    const newPitch = Math.pow(2, semitones / 12);
+    deck.pitch = newPitch;
+    if (deck.source) {
+        deck.source.playbackRate.value = newPitch;
+    }
+}
 
+pitchSliderA.addEventListener('input', (e) => setPitch(deckA, parseFloat(e.target.value)));
+pitchSliderB.addEventListener('input', (e) => setPitch(deckB, parseFloat(e.target.value)));
 
-// Pitch control
-pitchSliderA.addEventListener('input', (e) => {
-    const semitones = parseFloat(e.target.value);
-    // convert semitone to playbackRate
-    deckA.pitch = Math.pow(2, semitones / 12);
-    if (deckA.source) 
-        deckA.source.playbackRate.value = deckA.pitch;
-});
-
-pitchSliderB.addEventListener('input', (e) => {
-    const semitones = parseFloat(e.target.value);
-    deckB.pitch = Math.pow(2, semitones / 12);
-    if (deckB.source) 
-        deckB.source.playbackRate.value = deckB.pitch;
-});
-
-// Crossfader functionality
+// Crossfader
 fadeSlider.addEventListener('input', (e) => {
-    const value = parseInt(e.target.value) // 0 to 100
-    const gainA = (100 - value) / 100;
-    const gainB = value / 100;
-
-    deckA.gainNode.gain.value = gainA;
-    deckB.gainNode.gain.value = gainB;
+    const value = parseInt(e.target.value);
+    deckA.gainNode.gain.value = (100 - value) / 100;
+    deckB.gainNode.gain.value = value / 100;
 });
-
-// TODO: FIX BUG - when changing mst vol after crossfade, the crossfade resets

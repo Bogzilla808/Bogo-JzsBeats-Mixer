@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Bogo JzsBeats Mixer — Multimedia Project (HTML & CSS)</title>
+  <title>🔊 Bogo JzsBeats Mixer</title>
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
@@ -12,7 +12,7 @@
       <header>
         <div>
           <h1>Bogo JzsBeats Mixer</h1>
-          <div class="subtitle">Multimedia project — HTML &amp; CSS prototype</div>
+          <div class="subtitle">Multimedia project — HTML/CSS/JS + Audio/Video/Canvas API (banger factory)</div>
         </div>
       </header>
 
@@ -31,7 +31,9 @@
               <button class="btn ghost" id="pauseA">Pause</button>
             </div>
 
-            <div class="waveform" id="waveA">Waveform (placeholder)</div>
+            <div class="waveform">
+              <canvas id="waveA" width="400" height="100"></canvas>
+            </div>
 
             <div class="controls">
               <div class="big-knob">
@@ -68,7 +70,9 @@
               <button class="btn ghost" id="pauseB">Pause</button>
             </div>
 
-            <div class="waveform" id="waveB">Waveform (placeholder)</div>
+            <div class="waveform">
+              <canvas id="waveB" width="400" height="100"></canvas>
+            </div>
 
             <div class="controls">
               <div class="big-knob">
@@ -171,7 +175,14 @@
       </div>
 
       <footer>
-        This is an HTML/CSS prototype. Next: wire audio with Web Audio API, implement waveform view, sync BPM, and beatmatching.
+          <h4>MIT © 2025 - Radu Bogdan | Ticu-Jianu Eduard &nbsp; &nbsp;</h4>
+
+          Permission is granted to use, copy, modify, and distribute this software
+          for any purpose with or without fee, provided that the above copyright notice
+          appears in all copies.
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          <h5>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.</h5>
       </footer>
     </aside>
   </div>

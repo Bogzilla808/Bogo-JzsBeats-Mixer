@@ -60,6 +60,16 @@ display:flex; flex-direction:column; gap:10px;
 /* -webkit-appearance:none --> remove the browser’s default styling for elements */
 .range{width:100%; display:flex; gap:8px; align-items:center}
 
+canvas {
+  width: 100%;
+  height: 100%;
+  border: 2px solid #00b7ff;
+  border-radius: 8px;
+  box-shadow: 0 0 12px #00b7ff, 0 0 24px #00b7ff40;
+  background-color: #0b0011; /* Dark background for contrast */
+}
+
+
 input[type=range]{
     -webkit-appearance:none; 
     height:6px; border-radius:6px; 
