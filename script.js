@@ -266,6 +266,3 @@ if(sliderId.endsWith('B'))
 
 }
 
-
-
-
