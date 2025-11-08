@@ -265,7 +265,3 @@ if(sliderId.endsWith('B'))
 }
 
 }
-
-
-
-
