@@ -1,9 +1,13 @@
 // Create main audio context
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-// Master gain node (final stage)
+// Master gain nodes (final stage)
 const masterGain = audioCtx.createGain();
-masterGain.connect(audioCtx.destination);
+const masterOutput = audioCtx.createGain();
+const masterAnalyser = audioCtx.createAnalyser();
+
+masterAnalyser.fftSize = 2048;               // time-domain resolution
+masterAnalyser.smoothingTimeConstant = 0.2;
 
 // Deck structures
 let deckA = {
@@ -43,19 +47,31 @@ const highSliderB = document.getElementById('eqHighSliderB');
 const midSliderB = document.getElementById('eqMidSliderB');
 const lowSliderB = document.getElementById('eqLowSliderB');
 
+// FX HTML Elements
+const reverbCheckbox = document.getElementById('revToggle');
+const reverbSlider = document.getElementById('revMix');
+
 // computing and displaying master volume in db
 const masterPeakEl = document.getElementById('masterPeak');
-const masterAnalyser = audioCtx.createAnalyser();
-masterAnalyser.fftSize = 2048;               // time-domain resolution
-masterAnalyser.smoothingTimeConstant = 0.2;
-masterGain.disconnect();
-masterGain.connect(masterAnalyser);
-masterAnalyser.connect(audioCtx.destination);
+
+// Reverb Nodes
+const reverbConvolver = audioCtx.createConvolver();
+const reverbWet = audioCtx.createGain();
+const reverbDry = audioCtx.createGain();
+reverbWet.gain.value = 0;
+reverbDry.gain.value = 1;
+
+async function loadImpulseResponse(url) {
+    const response = await fetch(url);
+    const arrayBuffer = await response.arrayBuffer();
+    reverbConvolver.buffer = await audioCtx.decodeAudioData(arrayBuffer);
+}
 
 function ampToDbFS(amp) {
     if (amp <= 0) return -100.0; // clamp silence to a readable floor
     return 20 * Math.log10(amp);
 }
+
 // Compute peak from time-domain buffer
 function computePeakFromAnalyser() {
     const buffer = new Float32Array(masterAnalyser.fftSize);
@@ -132,10 +148,16 @@ deckB.lowFilter.connect(deckB.midFilter);
 deckB.midFilter.connect(deckB.highFilter);
 deckB.highFilter.connect(deckB.gainNode);
 
-
 // Connect to master
 deckA.gainNode.connect(masterGain);
 deckB.gainNode.connect(masterGain);
+masterGain.connect(reverbDry);
+masterGain.connect(reverbWet);
+reverbWet.connect(reverbConvolver);
+reverbConvolver.connect(masterOutput);
+reverbDry.connect(masterOutput);
+masterOutput.connect(masterAnalyser);
+masterAnalyser.connect(audioCtx.destination);
 
 // Load and draw waveform once
 function loadTrack(file, deck) {
@@ -251,11 +273,11 @@ fadeSlider.addEventListener('input', (e) => {
  
 const createValueDisplay = (slider, lblText) =>
 {
-const display = document.createElement('span');
-display.id = `${slider.id}Value`;
-display.textContent = `${slider.value} dB`;
-slider.parentNode.insertBefore(display,slider.nextSibling);
-return display;
+    const display = document.createElement('span');
+    display.id = `${slider.id}Value`;
+    display.textContent = `${slider.value} dB`;
+    slider.parentNode.insertBefore(display,slider.nextSibling);
+    return display;
 }
 
 const highValueDisplayA = createValueDisplay(highSliderA,'High');
@@ -267,7 +289,6 @@ const midValueDisplayB = createValueDisplay(midSliderB,'Mid');
 const lowValueDisplayB = createValueDisplay(lowSliderB, 'Low');
 
 // Event listener for displaying the new values
-
 function handleSliderChange (event)
 {
     const slider = event.target;
@@ -285,41 +306,67 @@ lowSliderB.addEventListener('input',handleSliderChange);
 
 function applyEQGain(sliderId, gainValue) 
 {
-const valueInDB = parseFloat(gainValue);
+    const valueInDB = parseFloat(gainValue);
 
+    if(sliderId.endsWith('A'))
+    {
+        const deck = deckA;
+        if(sliderId.startsWith('eqHigh'))
+        {
+            deck.highFilter.gain.setValueAtTime(valueInDB,audioCtx.currentTime);
+        }
+        else if(sliderId.startsWith('eqMid'))
+        {
+            deck.midFilter.gain.setValueAtTime(valueInDB,audioCtx.currentTime);
+        }
+        else if(sliderId.startsWith('eqLow'))
+        {
+            deck.lowFilter.gain.setValueAtTime(valueInDB, audioCtx.currentTime)
+        }
+    }
 
-if(sliderId.endsWith('A'))
-{
-    const deck = deckA;
-    if(sliderId.startsWith('eqHigh'))
+    if(sliderId.endsWith('B'))
     {
-        deck.highFilter.gain.setValueAtTime(valueInDB,audioCtx.currentTime);
-    }
-    else if(sliderId.startsWith('eqMid'))
-    {
-        deck.midFilter.gain.setValueAtTime(valueInDB,audioCtx.currentTime);
-    }
-    else if(sliderId.startsWith('eqLow'))
-    {
-        deck.lowFilter.gain.setValueAtTime(valueInDB, audioCtx.currentTime)
+        const deck = deckB;
+        if(sliderId.startsWith('eqHigh'))
+        {
+            deck.highFilter.gain.setValueAtTime(valueInDB,audioCtx.currentTime);
+        }
+        else if(sliderId.startsWith('eqMid'))
+        {
+            deck.midFilter.gain.setValueAtTime(valueInDB,audioCtx.currentTime);
+        }
+        else if(sliderId.startsWith('eqLow'))
+        {
+            deck.lowFilter.gain.setValueAtTime(valueInDB, audioCtx.currentTime)
+        }
     }
 }
-if(sliderId.endsWith('B'))
-{
-    const deck = deckB;
-    if(sliderId.startsWith('eqHigh'))
-    {
-        deck.highFilter.gain.setValueAtTime(valueInDB,audioCtx.currentTime);
-    }
-    else if(sliderId.startsWith('eqMid'))
-    {
-        deck.midFilter.gain.setValueAtTime(valueInDB,audioCtx.currentTime);
-    }
-    else if(sliderId.startsWith('eqLow'))
-    {
-        deck.lowFilter.gain.setValueAtTime(valueInDB, audioCtx.currentTime)
-    }
-}
 
-    // Testing git branching
-}
+// add reverb file on app start
+window.onload = () => {
+    loadImpulseResponse("./room_ir.wav");
+};
+
+// Toggle reverb
+reverbCheckbox.addEventListener("change", () => {
+    if(reverbCheckbox.checked) {
+        // Keep current mix
+        const wet = reverbSlider.value / 100;
+        reverbWet.gain.value = wet;
+        reverbDry.gain.value = 1 - wet;
+    }
+    else {
+        reverbWet.gain.value = 0;
+        reverbDry.gain.value = 1;
+    }
+});
+
+// Adjust reverb
+reverbSlider.addEventListener("input", () => {
+    const wet = reverbSlider.value / 100;
+    if(reverbCheckbox.checked) {
+        reverbWet.gain.value = wet;
+        reverbDry.gain.value = 1 - wet;
+    }
+});
