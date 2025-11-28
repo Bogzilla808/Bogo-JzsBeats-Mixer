@@ -43,6 +43,63 @@ const highSliderB = document.getElementById('eqHighSliderB');
 const midSliderB = document.getElementById('eqMidSliderB');
 const lowSliderB = document.getElementById('eqLowSliderB');
 
+// computing and displaying master volume in db
+const masterPeakEl = document.getElementById('masterPeak');
+const masterAnalyser = audioCtx.createAnalyser();
+masterAnalyser.fftSize = 2048;               // time-domain resolution
+masterAnalyser.smoothingTimeConstant = 0.2;
+masterGain.disconnect();
+masterGain.connect(masterAnalyser);
+masterAnalyser.connect(audioCtx.destination);
+
+function ampToDbFS(amp) {
+    if (amp <= 0) return -100.0; // clamp silence to a readable floor
+    return 20 * Math.log10(amp);
+}
+// Compute peak from time-domain buffer
+function computePeakFromAnalyser() {
+    const buffer = new Float32Array(masterAnalyser.fftSize);
+    masterAnalyser.getFloatTimeDomainData(buffer);
+    let peak = 0;
+    for(let i=0;i<buffer.length;i++) {
+        const v = Math.abs(buffer[i]);
+        if (v > peak) peak = v;
+    }
+    return peak;
+}
+
+function updateMasterPeakUI() {
+    if (audioCtx.state === 'suspended') {
+        masterPeakEl.textContent = '-100.0 dB';
+        masterPeakEl.style.color = ''; // default
+        return;
+    }
+
+    const peak = computePeakFromAnalyser();
+    let db = ampToDbFS(peak);
+    db = Math.round(db * 10) / 10;
+    // Display
+    masterPeakEl.textContent = `${db.toFixed(1)} dB`;
+
+    // Visual cue: red if above -6 dB
+    if (db >= -6.0) {
+        masterPeakEl.style.color = '#ff4d4f';
+    } else if (db >= -12.0) {
+        masterPeakEl.style.color = '#ffd166';
+    } else {
+        masterPeakEl.style.color = '';
+    }
+}
+
+const masterPeakInterval = setInterval(updateMasterPeakUI, 500);
+updateMasterPeakUI();
+
+document.addEventListener("click", () => {
+    if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+    }
+});
+
 //Creating the filters for each slider in each deck
 deckA.lowFilter = audioCtx.createBiquadFilter();
 deckA.lowFilter.type = 'lowshelf';
