@@ -26,7 +26,7 @@ let deckB = {
     canvas: document.getElementById('waveB')
 };
 
-
+// HTML Elements
 const labelA = document.getElementById('fileA');
 const labelB = document.getElementById('fileB');
 
@@ -47,7 +47,8 @@ const highSliderB = document.getElementById('eqHighSliderB');
 const midSliderB = document.getElementById('eqMidSliderB');
 const lowSliderB = document.getElementById('eqLowSliderB');
 
-// FX HTML Elements
+
+// FX HTML Elements for reverb
 const reverbCheckbox = document.getElementById('revToggle');
 const reverbSlider = document.getElementById('revMix');
 
@@ -60,6 +61,44 @@ const reverbWet = audioCtx.createGain();
 const reverbDry = audioCtx.createGain();
 reverbWet.gain.value = 0;
 reverbDry.gain.value = 1;
+
+//FX HTML Elements for delay
+const delayToggle = document.getElementById('delayToggle');
+const delayTimeSlider = document.getElementById('delayTime');
+const delayFeedbackSlider = document.getElementById('delayFeedback');
+const delayMixSlider = document.getElementById('delayMix');
+
+// Master Delay Nodes
+const masterDelay = audioCtx.createDelay(2.0); 
+const masterDelayFeedback = audioCtx.createGain();
+const masterDelayWet = audioCtx.createGain();
+const masterDelayDry = audioCtx.createGain();
+
+ //Intermediate Master Mixer Node
+  const masterMixer = audioCtx.createGain();
+  deckA.gainNode.connect(masterMixer);
+  deckB.gainNode.connect(masterMixer);
+
+// Delay Controls
+masterDelayFeedback.gain.value = 0.5;
+masterDelay.connect(masterDelayFeedback);
+masterDelayFeedback.connect(masterDelay);
+
+masterMixer.connect(masterDelay);
+masterMixer.connect(masterDelayDry);
+
+masterDelay.connect(masterDelayWet);
+masterDelayWet.connect(masterOutput);
+
+masterDelayDry.connect(masterOutput);
+
+masterDelayWet.gain.value = 0.0;
+masterDelayDry.gain.value = 1.0;
+
+
+//masterGain.connect(audioCtx.destination);
+
+//------------------------------------------------
 
 async function loadImpulseResponse(url) {
     const response = await fetch(url);
@@ -149,14 +188,15 @@ deckB.midFilter.connect(deckB.highFilter);
 deckB.highFilter.connect(deckB.gainNode);
 
 // Connect to master
-deckA.gainNode.connect(masterGain);
-deckB.gainNode.connect(masterGain);
+
+masterOutput.connect(masterGain); 
 masterGain.connect(reverbDry);
 masterGain.connect(reverbWet);
+
 reverbWet.connect(reverbConvolver);
-reverbConvolver.connect(masterOutput);
-reverbDry.connect(masterOutput);
-masterOutput.connect(masterAnalyser);
+reverbConvolver.connect(masterAnalyser);
+reverbDry.connect(masterAnalyser);
+
 masterAnalyser.connect(audioCtx.destination);
 
 // Load and draw waveform once
@@ -368,5 +408,30 @@ reverbSlider.addEventListener("input", () => {
     if(reverbCheckbox.checked) {
         reverbWet.gain.value = wet;
         reverbDry.gain.value = 1 - wet;
+    }
+});
+
+// Toggle delay
+delayToggle.addEventListener("change", () => {
+    const isEnabled = delayToggle.checked;;
+    masterDelayWet.gain.value = isEnabled ? (delayMixSlider.value / 100) : 0.0;
+});
+
+delayTimeSlider.addEventListener("input", (e) => {
+    masterDelay.delayTime.setValueAtTime(parseFloat(e.target.value) / 1000, 
+    audioCtx.currentTime);
+});
+
+delayFeedbackSlider.addEventListener("input", (e) => {
+    masterDelayFeedback.gain.setValueAtTime(parseFloat(e.target.value) / 100, 
+    audioCtx.currentTime);
+});
+
+delayMixSlider.addEventListener("input", (e) => {
+    const mixValue = parseFloat(e.target.value) / 100;
+    const dryValue = 1 - mixValue;
+    if(delayToggle.checked) {
+        masterDelayWet.gain.setValueAtTime(mixValue, audioCtx.currentTime);
+        masterDelayDry.gain.setValueAtTime(dryValue, audioCtx.currentTime);
     }
 });

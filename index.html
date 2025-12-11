@@ -138,7 +138,7 @@
           </div>
         </div>
 
-        <div class="effect">
+        <!-- <div class="effect">
           <div style="display:flex; justify-content:space-between; align-items:center">
             <div>
               <strong>Delay</strong>
@@ -153,7 +153,7 @@
             <label class="small">Time</label>
             <input type="range" min="0" max="1000" value="250" id="delayTime">
           </div>
-        </div>
+        </div> -->
 
         <div class="effect">
           <div style="display:flex; justify-content:space-between; align-items:center">
@@ -173,6 +173,32 @@
         </div>
 
       </div>
+
+
+      <div class="effect">
+    <div style="display:flex; justify-content:space-between; align-items:center">
+        <div>
+            <strong>Delay</strong>
+            <div class="small">Master Echo</div>
+        </div>
+        <div class="toggle">
+            <label class="small">On</label>
+            <input type="checkbox" id="delayToggle">
+        </div>
+    </div>
+    <div style="margin-top:8px">
+        <label class="small">Time (ms)</label>
+        <input type="range" min="10" max="1500" value="250" id="delayTime">
+    </div>
+    <div style="margin-top:8px">
+        <label class="small">Feedback (%)</label>
+        <input type="range" min="0" max="95" value="50" id="delayFeedback">
+    </div>
+    <div style="margin-top:8px">
+        <label class="small">Wet/Dry Mix</label>
+        <input type="range" min="0" max="100" value="0" id="delayMix">
+    </div>
+</div>
 
       <footer>
           <h4>MIT © 2025 - Radu Bogdan | Ticu-Jianu Eduard &nbsp; &nbsp;</h4>
