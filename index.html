@@ -156,24 +156,36 @@
         </div> -->
 
         <div class="effect">
-          <div style="display:flex; justify-content:space-between; align-items:center">
-            <div>
-              <strong>Filter</strong>
-              <div class="small">Low-pass / High-pass</div>
-            </div>
-            <div class="toggle">
-              <label class="small">On</label>
-              <input type="checkbox" id="filterToggle">
-            </div>
-          </div>
-          <div style="margin-top:8px">
-            <label class="small">Cutoff</label>
-            <input type="range" min="20" max="20000" value="12000" id="filterCutoff">
-          </div>
+    <div style="display:flex; justify-content:space-between; align-items:center">
+        <div>
+            <strong>Filter</strong>
+            <div class="small">Master Cutoff Filter</div>
         </div>
-
-      </div>
-
+        <div class="toggle">
+            <label class="small">On</label>
+            <input type="checkbox" id="filterToggle">
+        </div>
+    </div>
+    <div class = "filter-type" style = "display:flex; justify-content: space-around; margin-top:10px">
+      <label class = "small"><input type = "radio" name="masterFilterType" value="lowpass" id="lpToggle" checked> LP</label>
+      <label class = "small"><input type = "radio" name="masterFilterType" value="bandpass" id="bpToggle"> BP</label>
+      <label class = "small"><input type = "radio" name="masterFilterType" value="highpass" id="hpToggle"> HP</label>
+    </div>
+   <div style="margin-top:8px">
+    <label class="small">Cutoff Frequency (Hz)</label>
+    <input type="range" min="20" max="20000" value="20000" id="filterCutoff">
+</div>
+<div style="text-align:center; margin-bottom:10px;">
+    <span id="filterCutoffValue" class="small">20000 Hz</span>
+</div>
+    <div style="margin-top:8px">
+        <label class="small">Q-Factor (Resonance)</label>
+        <input type="range" min="0.001" max="20" step="0.01" value="1.0" id="filterQ">
+    </div>
+    <div style="text-align:center">
+        <span id="filterQValue" class="small">Q: 1.00</span>
+    </div>
+</div>
 
       <div class="effect">
     <div style="display:flex; justify-content:space-between; align-items:center">

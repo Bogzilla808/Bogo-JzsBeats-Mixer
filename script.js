@@ -79,24 +79,34 @@ const masterDelayDry = audioCtx.createGain();
   deckA.gainNode.connect(masterMixer);
   deckB.gainNode.connect(masterMixer);
 
+  masterMixer.connect(masterOutput);
+
 // Delay Controls
 masterDelayFeedback.gain.value = 0.5;
 masterDelay.connect(masterDelayFeedback);
 masterDelayFeedback.connect(masterDelay);
 
 masterMixer.connect(masterDelay);
-masterMixer.connect(masterDelayDry);
 
 masterDelay.connect(masterDelayWet);
 masterDelayWet.connect(masterOutput);
 
-masterDelayDry.connect(masterOutput);
-
 masterDelayWet.gain.value = 0.0;
-masterDelayDry.gain.value = 1.0;
 
+//FX HTML Elements for filter
+const filterToggle = document.getElementById('filterToggle');
+const filterCutoffSlider = document.getElementById('filterCutoff');
+const filterCutoffDisplay = document.getElementById('filterCutoffValue'); 
+const filterTypeRadios = document.querySelectorAll('input[name="masterFilterType"]');
 
-//masterGain.connect(audioCtx.destination);
+const filterQSlider = document.getElementById('filterQ');
+const filterQDisplay = document.getElementById('filterQValue');
+
+// Master Filter Node
+const masterFilter = audioCtx.createBiquadFilter();
+masterFilter.type = 'lowpass'; 
+masterFilter.frequency.setValueAtTime(parseFloat(filterCutoffSlider.value), audioCtx.currentTime); 
+masterFilter.Q.setValueAtTime(parseFloat(filterQSlider.value), audioCtx.currentTime);
 
 //------------------------------------------------
 
@@ -188,11 +198,10 @@ deckB.midFilter.connect(deckB.highFilter);
 deckB.highFilter.connect(deckB.gainNode);
 
 // Connect to master
-
 masterOutput.connect(masterGain); 
-masterGain.connect(reverbDry);
-masterGain.connect(reverbWet);
-
+masterGain.connect(masterFilter);
+masterFilter.connect(reverbDry);  
+masterFilter.connect(reverbWet);
 reverbWet.connect(reverbConvolver);
 reverbConvolver.connect(masterAnalyser);
 reverbDry.connect(masterAnalyser);
@@ -411,7 +420,7 @@ reverbSlider.addEventListener("input", () => {
     }
 });
 
-// Toggle delay
+// Delay events
 delayToggle.addEventListener("change", () => {
     const isEnabled = delayToggle.checked;;
     masterDelayWet.gain.value = isEnabled ? (delayMixSlider.value / 100) : 0.0;
@@ -434,4 +443,43 @@ delayMixSlider.addEventListener("input", (e) => {
         masterDelayWet.gain.setValueAtTime(mixValue, audioCtx.currentTime);
         masterDelayDry.gain.setValueAtTime(dryValue, audioCtx.currentTime);
     }
+});
+
+// Filter events
+
+// Cutoff Frequency Control 
+filterCutoffSlider.addEventListener('input', (e) => {
+    const freq = parseFloat(e.target.value);
+    masterFilter.frequency.linearRampToValueAtTime(freq, audioCtx.currentTime + 0.05);
+    filterCutoffDisplay.textContent = `${Math.round(freq).toLocaleString()} Hz`;
+});
+
+// Q-Factor Control 
+filterQSlider.addEventListener('input', (e) => {
+    const qValue = parseFloat(e.target.value);
+    masterFilter.Q.linearRampToValueAtTime(qValue, audioCtx.currentTime + 0.05);
+    filterQDisplay.textContent = `Q: ${qValue.toFixed(2)}`;
+});
+
+// Toggle Master Filter On/Off
+filterToggle.addEventListener("change", () => {
+    if (filterToggle.checked) {
+        const selectedType = document.querySelector('input[name="masterFilterType"]:checked').value;
+        masterFilter.type = selectedType;
+        masterFilter.frequency.setValueAtTime(parseFloat(filterCutoffSlider.value), audioCtx.currentTime);
+        masterFilter.Q.setValueAtTime(parseFloat(filterQSlider.value), audioCtx.currentTime);
+        
+    } else {
+        masterFilter.type = 'lowpass';
+        masterFilter.frequency.setValueAtTime(20000, audioCtx.currentTime);
+    }
+});
+
+// Change Filter Type
+filterTypeRadios.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        if (filterToggle.checked) {
+            masterFilter.type = e.target.value;
+        }
+    });
 });
