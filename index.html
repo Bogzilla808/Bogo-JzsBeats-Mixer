@@ -9,6 +9,7 @@
 <body>
   <div class="container">
     <div>
+      <hr class="hr-glow">
       <header>
         <div>
           <h1>Bogo JzsBeats Mixer</h1>
@@ -104,8 +105,19 @@
         </div>
 
       </main>
+      <hr class="hr-glow">
+      <div class="trademark">
+        <h4>MIT © 2025 - Radu Bogdan | Ticu-Jianu Eduard &nbsp; &nbsp;</h4>
+    
+        Permission is granted to use, copy, modify, and distribute this software
+        for any purpose with or without fee, provided that the above copyright notice
+        appears in all copies.
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        <h5>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.</h5>
+      </div>
     </div>
-
+    
     <aside class="mixer-right">
       <h3 style="margin-top:0">Master & Effects</h3>
 
@@ -138,23 +150,6 @@
           </div>
         </div>
 
-        <!-- <div class="effect">
-          <div style="display:flex; justify-content:space-between; align-items:center">
-            <div>
-              <strong>Delay</strong>
-              <div class="small">Slapback / echo</div>
-            </div>
-            <div class="toggle">
-              <label class="small">On</label>
-              <input type="checkbox" id="delayToggle">
-            </div>
-          </div>
-          <div style="margin-top:8px">
-            <label class="small">Time</label>
-            <input type="range" min="0" max="1000" value="250" id="delayTime">
-          </div>
-        </div> -->
-
         <div class="effect">
     <div style="display:flex; justify-content:space-between; align-items:center">
         <div>
@@ -176,7 +171,7 @@
     <input type="range" min="20" max="20000" value="20000" id="filterCutoff">
 </div>
 <div style="text-align:center; margin-bottom:10px;">
-    <span id="filterCutoffValue" class="small">20000 Hz</span>
+<span id="filterCutoffValue" class="small">20000 Hz</span>
 </div>
     <div style="margin-top:8px">
         <label class="small">Q-Factor (Resonance)</label>
@@ -187,45 +182,35 @@
     </div>
 </div>
 
-      <div class="effect">
-    <div style="display:flex; justify-content:space-between; align-items:center">
-        <div>
-            <strong>Delay</strong>
-            <div class="small">Master Echo</div>
-        </div>
-        <div class="toggle">
-            <label class="small">On</label>
-            <input type="checkbox" id="delayToggle">
-        </div>
-    </div>
-    <div style="margin-top:8px">
-        <label class="small">Time (ms)</label>
-        <input type="range" min="10" max="1500" value="250" id="delayTime">
-    </div>
-    <div style="margin-top:8px">
-        <label class="small">Feedback (%)</label>
-        <input type="range" min="0" max="95" value="50" id="delayFeedback">
-    </div>
-    <div style="margin-top:8px">
-        <label class="small">Wet/Dry Mix</label>
-        <input type="range" min="0" max="100" value="0" id="delayMix">
-    </div>
+<div class="effect">
+  <div style="display:flex; justify-content:space-between; align-items:center">
+      <div>
+          <strong>Delay</strong>
+          <div class="small">Master Echo</div>
+      </div>
+      <div class="toggle">
+          <label class="small">On</label>
+          <input type="checkbox" id="delayToggle">
+      </div>
+  </div>
+  <div style="margin-top:8px">
+      <label class="small">Time (ms)</label>
+      <input type="range" min="10" max="1500" value="250" id="delayTime">
+  </div>
+  <div style="margin-top:8px">
+      <label class="small">Feedback (%)</label>
+      <input type="range" min="0" max="95" value="50" id="delayFeedback">
+  </div>
+  <div style="margin-top:8px">
+      <label class="small">Wet/Dry Mix</label>
+      <input type="range" min="0" max="100" value="0" id="delayMix">
+  </div>
 </div>
-
-      <footer>
-          <h4>MIT © 2025 - Radu Bogdan | Ticu-Jianu Eduard &nbsp; &nbsp;</h4>
-
-          Permission is granted to use, copy, modify, and distribute this software
-          for any purpose with or without fee, provided that the above copyright notice
-          appears in all copies.
-          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-          <h5>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.</h5>
-      </footer>
+      
     </aside>
+    
   </div>
 
-  <!-- Minimal JS skeleton. The full audio implementation will use Web Audio API. -->
   <script src="./script.js"></script>
 </body>
 </html>
